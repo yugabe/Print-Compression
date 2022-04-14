@@ -1,0 +1,87 @@
+<html>
+<head>
+    <title>RIDDLE: Print Compression</title>
+<style>
+
+body {
+    max-width: 900px;
+    font-family: monospace;
+    margin: 10px auto;
+}
+body {
+    background-color: #fef;
+    color: #202;
+    background-image: linear-gradient(to bottom left, #b0f6, #fff0, #fff0, #fff0, #b0f6), linear-gradient(to bottom right, #17c6, #fff0, #fff0, #fff0, #17c6);
+}
+body.dark {
+    color: #fef;
+    background-color: #202;
+}
+h1, a, code a, a code {
+    font-weight: 900;
+    color: #b0f !important;
+    border: 1px solid;
+}
+b, strong {
+    color: #f9f !important;
+}
+code {
+    background: #8885;
+    white-space: pre;
+}
+c {
+    white-space: pre-wrap;
+}
+
+</style>
+
+<script>setTimeout(() => { if (localStorage.getItem('dark')) document.body.classList.add('dark'); })</script>
+
+</head>
+<body>
+<div style="text-align: right">
+    <i style="cursor: pointer" onclick="document.body.classList.remove('dark'); localStorage.removeItem('dark')">☀️</i> 
+    <i style="cursor: pointer" onclick="document.body.classList.add('dark'); localStorage.setItem('dark', 1)">🌑</i> 
+</div>
+<h1>PRINT COMPRESSION</h1>
+<p>You need to leave a message of a certain kind (that is a fix 5 words long of 5-letter words, so technically 25 useful characters) to one of your associates.<br/></p>
+<p>The problem is, you only have on hand a <a href="https://en.wikipedia.org/wiki/Dot_matrix_printer">dot matrix printer</a> that is capable of printing only 21 characters before the ink runs out!<br/></p>
+<p><strong>&quot;CCodes&quot;</strong> are 25 character long codes that contain only uppercase letters from the English alphabet except <code>'A'</code>, <code>'E'</code>, <code>'I'</code>, <code>'O'</code>, <code>'U'</code>, <code>'L'</code> and <code>'S'</code>, and all integer numbers except <code>'0'</code>, <code>'1'</code> and <code>'5'</code>.<br/>
+These characters are omitted because depending on the printing font, or when spoken out loud, it could be easy to confuse them and make a mistake when copying them.<br/>
+So that's characters <code>'A'-'Z'</code> and <code>'0'-'9'</code>, but with the above 10 exceptions; that's a total of <strong>26 possible characters</strong>, each of which can be represented in <a href="https://en.wikipedia.org/wiki/Binary_code">binary</a> on 5 bits -- as 5 bits can represent up to 32 values, <code>0b00000</code> through <code>0b11111</code>.<br/>
+For readability, the 25 characters are grouped into groups of 5 with the separator <code>'-'</code>, but as this is a fixed format, we don't need to encode these.<br/>
+The letter <code>'B'</code> (as the first letter of the alphabet -- <code>'A'</code> -- is skipped) can be represented by the binary value <code>0</code> (<code>0b00000</code>), <code>'C'</code> by <code>1</code> (<code>0b00001</code>), and so on, until <code>'Z'</code> by <code>18</code> (<code>0b10010</code>), then <code>'2'</code> (as <code>'0'</code> and <code>'1'</code> are once again skipped) by <code>19</code> and <code>'9'</code> by <code>25</code> (<code>0b11001</code>).<br/>
+Invalid values are <code>26</code> (<code>0b11010</code>) through <code>31</code> (<code>0b11111</code>), as we don't have any characters that represent these possible binary values.<br/>
+25 characters each occupying 5 bits equal to a total of 125 bits, so a <strong>CCode</strong> can be represented on <em>125 bits</em> total.<br/></p>
+<p>The <a href="https://en.wikipedia.org/wiki/Base64">Base64 encoding</a> encodes binary data onto a <a href="https://en.wikipedia.org/wiki/Base64#Base64_table_from_RFC_4648">6-bit (64 value) table</a>.<br/>
+The Base64 encoding table goes from <code>'A'</code>-<code>'Z'</code> (<code>0b000000</code>-<code>0b011001</code>), then <code>'a'</code>-<code>'z'</code> (<code>0b011010</code>-<code>0b110011</code>), then <code>'0'</code>-<code>'9'</code> (<code>0b110100</code>-<code>0b111101</code>), to finally the <code>'+'</code> (<code>0b111110</code>) and <code>'/'</code> (<code>0b111111</code>) symbols. Any remaining data would be padded with the <code>'='</code> symbol. That is a total of 64 possible values.<br/></p>
+<p>Our 125-bit <strong>CCode</strong> data can then be represented by Base64 symbols (characters).<br/>
+As each Base64 character occupies 6 bits, we need a total of 126 bits (the closest integer evenly divisible by 6 that is larger or equal to 125).<br/>
+To get 126 bits, we should pad our 125-bit value <strong>from the left</strong> with <strong>an additional 0 bit</strong>.<br/>
+We can add the same <code>'-'</code> separator character anywhere, so for convenience, let's group 3 groups of 7 characters, similar to <strong>CCodes</strong> 5-5 grouping.<br/>
+Let's call these 21 character long, Base64-encoded <strong>CCodes</strong> <strong>&quot;BCodes&quot;</strong>.<br/>
+As 126 % 6 == 0, we won't have '=' symbols in our <strong>BCodes</strong>, as there are no padding characters needed to convert either way.<br/></p>
+<p>Let's look at an example in a smaller scale.<br/></p>
+<p><c>    </c>Take, for instance, a shorter <strong>CCode</strong> of just 3 characters: <code>BX9</code>.<br/>
+<c>    </c>For each character, we take a look at its raw binary value.<br/>
+<c>    </c>As <code>'B'</code> is the first in our predefined order (<code>'A'</code> is skipped), so it's <a href="https://en.wikipedia.org/wiki/Zero-based_numbering">index</a> is <code>0</code>, this gives us the 5-bit binary <code>0b00000</code>.<br/>
+<c>    </c>The next value is <code>'X'</code>, that is the 17th of our order, so its index is <code>16</code>, which is <code>0b10000</code> in 5-bit binary.<br/>
+<c>    </c>The final value is <code>'9'</code>, the last possible value, that has an index of <code>25</code>, or <code>0b11001</code>.<br/>
+<c>    </c>These are <code>3 * 5 = 15</code> bits total, but we need a number of bits that is a multiple of 6, so we'll pad these 15 bits with 3 additional 0 bits from the left.<br/>
+<c>    </c>This gives us the value:<c>   </c><code>000</code><c>   </c><code>00000</code> <code>10000</code> <code>11001</code> = <code>000000001000011001</code>.<br/>
+<c>                             </c><code>padding</code><c>   </c><code>B</code><c>     </c><code>X</code><c>     </c><code>9</code><br/>
+<c>    </c>Now we take this value, and split it into 3 groups of 6 bits: <code>000000001000011001</code> = <code>000000</code> <code>001000</code> <code>011001</code>.<br/>
+<c>    </c>The first 6-bit value is <code>000000</code> (<code>0</code>), which corresponds to the letter <code>'A'</code> in Base64, which we can validate by using the encoder table from before.<br/>
+<c>    </c>The next value is <code>001000</code> (<code>8</code>), the letter <code>'I'</code>.<br/>
+<c>    </c>The final value is <code>011001</code> (<code>25</code>), which is represented by the Base64 character <code>'Z'</code>.<br/>
+<c>    </c>When all put together, we can validate that the short <strong>CCode</strong> <code>BX9</code> corresponds to the <strong>BCode</strong> <code>AIZ</code>.<br/>
+<c>    </c>It's worth pointing out that <em>the binary representation</em> of both the <strong>CCode</strong> <code>BX9</code> and the <strong>BCode</strong> <code>AIZ</code> <em>is the same</em>: <code>0b000000001000011001</code>.<br/></p>
+<p>When we encode long enough <strong>CCodes</strong>, we'll save 1 character after every 6 <strong>CCode</strong> characters: as a 6-character long <strong>CCode</strong> is 30 bits (6 characters times 5 bits), that can be represented by only 5 <strong>BCode</strong> characters (5 characters times 6 bits)!<br/>
+This means that each 25 character long <strong>CCode</strong> can be represented on just <code>126 / 6 = 21</code> Base64 <strong>BCode</strong> characters.<br/>
+Invariably, the <strong>CCode</strong> <code>BBBBB-BBBBB-BBBBB-BBBBB-BBBBB</code> will thus be represented by the <strong>BCode</strong> <code>AAAAAAA-AAAAAAA-AAAAAAA</code>, as these are both represented by all-zeroes in their raw binary forms.<br/>
+But the <strong>CCode</strong> <code>99999-99999-99999-99999-99999</code> will become <code>ZznOc5z-nOc5znO-c5znOc5</code> in <strong>BCode</strong> (because not all of the possible 32 values are used up in our 5-bit representation, so the binary form isn't all-ones).<br/>
+The now-classic, leaked Windows XP product key in <strong>CCode</strong>, <code>FCKGW-RHQQ2-YXRKT-8TG6W-2B7Q8</code> can be represented as <code>DCcj2FW-ucYMO3D-SWfMF14</code> in <strong>BCode</strong>.<br/></p>
+<p>Now, to ensure the conversion has an <a href="https://en.wikipedia.org/wiki/Inverse_function">inverse</a>, can you figure out what does the <strong>BCode</strong> <code>CCKIYwW-MxDViSq-KROscRS</code> look like in <strong>CCode</strong>?<br/></p>
+
+</body>
+</html>

@@ -1,0 +1,74 @@
+<html>
+<head>
+    <title>RIDDLE: Print Compression | PART TWO</title>
+<style>
+
+body {
+    max-width: 900px;
+    font-family: monospace;
+    margin: 10px auto;
+}
+body {
+    background-color: #fef;
+    color: #202;
+    background-image: linear-gradient(to bottom left, #b0f6, #fff0, #fff0, #fff0, #b0f6), linear-gradient(to bottom right, #17c6, #fff0, #fff0, #fff0, #17c6);
+}
+body.dark {
+    color: #fef;
+    background-color: #202;
+}
+h1, a, code a, a code {
+    font-weight: 900;
+    color: #b0f !important;
+    border: 1px solid;
+}
+b, strong {
+    color: #f9f !important;
+}
+code {
+    background: #8885;
+    white-space: pre;
+}
+c {
+    white-space: pre-wrap;
+}
+
+</style>
+
+<script>setTimeout(() => { if (localStorage.getItem('dark')) document.body.classList.add('dark'); })</script>
+
+</head>
+<body>
+<div style="text-align: right">
+    <i style="cursor: pointer" onclick="document.body.classList.remove('dark'); localStorage.removeItem('dark')">☀️</i> 
+    <i style="cursor: pointer" onclick="document.body.classList.add('dark'); localStorage.setItem('dark', 1)">🌑</i> 
+</div>
+<h1>PRINT COMPRESSION: PART TWO</h1>
+<p>Now you know how you could print your message with the printer before the ink runs out, but based on your previous experience, the ink always <a href="https://en.wikipedia.org/wiki/Murphy%27s_law">runs out at the worst possible time</a>.<br/>
+It's possible there is <em>even less ink</em> remaining in the printer, but you don't know how much.<br/>
+Could you print out your 25-character (<em>albeit now only 21</em>) message in even less characters?<br/></p>
+<p>The 7-bit <a href="https://en.wikipedia.org/wiki/ASCII">ASCII</a> encoding describes a similar <a href="https://en.wikipedia.org/wiki/ASCII#Character_set">table</a> to that of the 6-bit Base64, but ASCII also has some characters that are not printable, like the <a href="https://en.wikipedia.org/wiki/Delete_character"><code>[DEL]</code></a> control character used to delete a character from the current &quot;feed&quot; or the <a href="https://en.wikipedia.org/wiki/Bell_character"><code>[BEL]</code></a> character that signals the reciever to ring a bell or alarm.<br/>
+ASCII (the latest variant from 1986) has a total of 95 characters that are printable out of the possible 128, starting with <code>' '</code> (the space character, the only &quot;invisible&quot; printable character) at value <code>33</code> (which is <code>0b0100001</code> in its 7-bit raw binary form), followed by <code>'!'</code> (<code>34</code>, <code>0b0100010</code>) all the way through to <code>'~'</code> with value <code>126</code> (<code>0b1111110</code>).<br/>
+The printable characters form a contigous segment in the ASCII table, with no control characters in-between them (those are at the beginning and end of the table).<br/>
+We will keep the <code>' '</code> space character as a separator (as the <code>'-'</code> was in <strong>CCode</strong>), so we'll have only 94 characters to work with.</p>
+<p>One of the most efficient solutions one could come up to losslessly compress our message even more, is to take a look at how most <a href="https://en.wikipedia.org/wiki/Numeral_system">numeral systems</a> work.<br/>
+Essentially, we can look at our <strong>CCodes</strong> as <strong>numbers in a base-26 system</strong>, and we could take only the printable set of characters from ASCII and declare these specific printable ASCII-strings as <strong>numbers in a base-95 system</strong>.<br/>
+There are about <code>26^25 = 2,368e+35</code> <strong>CCodes</strong> (base-26 numbers).<br/>
+Now, if we had a base-95 number, how many digits <em>long</em> would it need to be accomodate for every possible <strong>CCode</strong> value?<br/>
+As it turns out, <code>log_95(26^25) ~= 17.886</code> -- that means, we need a total of <strong>18 digits</strong> of base-95 &quot;numbers&quot; (the printable ASCII characters) to represent a 25-character <strong>CCode</strong>.<br/>
+But <strong>how low</strong> could we go regarding the length of the message?<br/>
+We could do 15 characters using a 256-large table, 14 using 512, 12 using 1024... so it's diminishing returns from here on.<br/>
+Well, <em>if we just</em> came up with a symbol system that could represent each of the <code>2,368e+35</code> possible values, we <em>could even go down to <strong>just one</strong></em>.<br/>
+Let's just <em>not</em> do that, instead just hope that the ink will be enough to print our 18 characters and the <a href="https://en.wikipedia.org/wiki/Magic_smoke">magic smoke</a> will stay in the machine.<br/></p>
+<p><c>    </c>Now imagine we generate ALL possible <strong>CCode</strong> values from <code>BBBBB-BBBBB-BBBBB-BBBBB-BBBBB</code> all the way to <code>99999-99999-99999-99999-99999</code>, and assign each the next possible 18-character ASCII printable string in order, grouped to 3 groups of 6, separated by <code>' '</code> instead of <code>'-'</code> characters -- or let's just call these, <strong>&quot;ACodes&quot;</strong>.<br/>
+<c>    </c>This way, <code>BBBBB-BBBBB-BBBBB-BBBBB-BBBBB</code> (125 zeroes in binary) in <strong>CCode</strong> becomes <code>!!!!!!-!!!!!!-!!!!!!</code> in <strong>ACode</strong> (they are still all zeroes in our custom ASCII-like binary).<br/>
+<c>    </c>Changing the last <code>'B'</code> to a <code>'D'</code>, the <strong>CCode</strong> <code>BBBBB-BBBBB-BBBBB-BBBBB-BBBBD</code> (a numeric value of <code>2</code>) would become <code>!!!!!! !!!!!! !!!!!#</code> in <strong>ACode</strong>.<br/>
+<c>    </c>Changing the last <code>'B'</code> to a <code>'9'</code>, <code>BBBBB-BBBBB-BBBBB-BBBBB-BBBB9</code> (a decimal numeric value of <code>25</code>) becomes <code>!!!!!! !!!!!! !!!!!:</code>.<br/>
+<c>    </c>Changing the second to last <code>'B'</code> to a <code>'C'</code> instead, <code>BBBBB-BBBBB-BBBBB-BBBBB-BBBCB</code> (a decimal numeric value of <code>26</code>) becomes <code>!!!!!! !!!!!! !!!!!;</code>.<br/>
+<c>    </c>Changing the last and second to last <code>'B'</code>s to <code>'9'</code>s, <code>BBBBB-BBBBB-BBBBB-BBBBB-BBB99</code> (<code>675</code> in decimal) encodes as <code>!!!!!! !!!!!! !!!!(2</code>. It's worth noting here that the value <code>675</code> equals <code>(26 * 25) + 25</code> -- just as in decimal <code>99</code> is actually <code>(9 * 10) + 9</code>.<br/>
+<c>    </c>Changing instead the <em>first</em> <code>'B'</code> to a <code>'9'</code>, <code>9BBBB-BBBBB-BBBBB-BBBBB-BBBBB</code> becomes <code>b2*%I1 EW8hD/ 2LQn')</code> -- maybe it's worth comparing this to its <strong>BCode</strong> variant, <code>ZAAAAAA-AAAAAAA-AAAAAAA</code>.<br/>
+<c>    </c>Finally, <code>99999-99999-99999-99999-99999</code> thus becomes <code>dk1x?P ,dc'TY +]=4}l</code> (the highest possible valid <strong>ACode</strong> string), and <code>FCKGW-RHQQ2-YXRKT-8TG6W-2B7Q8</code> encodes as <code>(z;=*&quot; HfK}C~ &quot;.zmj}</code>.<br/></p>
+<p>As this is too a lossless translation of data and needs to be reversible, what <strong>CCode</strong> becomes of the <strong>ACode</strong> <code>&amp;?UC,u elOlz= ~y$nQw</code>?<br/></p>
+
+</body>
+</html>
